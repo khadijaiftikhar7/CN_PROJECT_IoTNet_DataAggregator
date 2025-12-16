@@ -1,89 +1,88 @@
-# IoT Smart Campus Network: Data Aggregator and Visualization
+# IoT Smart Campus Network: Sensor Simulation & Analytics
 
-**Project Name:** CN\_PROJECT\_IoTNet\_DataAggregator
+**Project Name:** CN_PROJECT_IoTNet_SimulatedAnalytics
 **Subject:** Computer Networks / IoT
 
 ## Project Overview
 
-This repository contains the source code and documentation for the Smart Campus IoT Network. The system monitors critical parameters including **Temperature, Humidity, CO2 levels, Noise, Light intensity, and Room Occupancy** across multiple zones (Classrooms and Laboratories).
+This repository contains the source code and documentation for the Smart Campus IoT Network. The system monitors critical environmental parameters including **Temperature, Humidity, CO2 levels, Noise, and Room Occupancy** across multiple zones.
 
-The project demonstrates a full-stack IoT implementation, featuring a Python-based sensor simulation layer, an MQTT transmission protocol, and a sophisticated Node-RED dashboard for real-time analytics and monitoring.
-
+**Simulation Approach:**
+Instead of generating random "fake" numbers or requiring physical hardware, this project **simulates a live sensor network** by streaming data from a real-world dataset. The system treats the dataset records as incoming sensor payloads, allowing for a realistic demonstration of data processing, normalization, and visualization logic without the complexity of MQTT brokers or external databases.
 
 ## System Architecture
 
-The system operates on a Publisher-Subscriber model:
+The system operates on a **Sensor Emulation Model**:
 
-1.  **Data Generation:** The Python script generates synthetic data.
-2.  **Transmission:** Data is serialized into JSON and published via MQTT to the **Node-RED embedded broker** under specific topics.
-3.  **Visualization & Storage:** Node-RED subscribes, processes the payloads for real-time charts and filtering, and persists all raw data into MongoDB.
+1.  **Sensor Emulation (Data Source):** A structured dataset (CSV) acts as the "Virtual Sensor Layer." Node-RED reads this data sequentially to mimic the periodic reporting of physical IoT devices.
+2.  **Data Processing:** Raw data is parsed, normalized, and routed based on Room ID (e.g., Library, Cafe), replicating the edge processing done in real networks.
+3.  **Visualization:** Processed streams are visualized on a "Glassmorphism" UI Dashboard for real-time monitoring.
+4.  **Session Logging:** Recent sensor readings are maintained in a local history log for immediate analysis.
 
 ## Key Features
 
-* **Advanced User Interface:** Custom-built "Glassmorphism" interface with professional industrial aesthetic.
+* **Realistic Sensor Simulation:** Uses actual dataset records to emulate the variability and trends of real-world environmental sensors.
+* **Advanced User Interface:** Custom-built "Glassmorphism" interface with a professional industrial aesthetic.
 * **Smart Filtering:** Global dropdown menu allows filtering the entire dashboard view (gauges, charts, status) to a single selected room.
-* **Data Persistence:** Sensor data is permanently stored in MongoDB.
-* **Real-Time Analytics:** Line charts visualize trends; bar charts track occupancy.
-* **Data Logging (History Log):** A custom HTML-based table provides a **transparent, auto-scrolling log** (History Log Manager) of the 20 most recent sensor updates, complete with granular timestamps.
+* **Real-Time Analytics:** * Line charts visualize environmental trends (Temp, Humidity) over time.
+    * Bar charts track dynamic occupancy levels.
+* **Local History Log:** An auto-scrolling HTML table displays the most recent sensor packets processed during the current session.
+
+## Dataset
+
+This project utilizes a specific IoT dataset to drive the sensor simulation.
+
+**Download the Dataset here:** > **[https://archive.ics.uci.edu/dataset/357/occupancy+detection]**
+
+*Please ensure the dataset file is downloaded and configured in the Node-RED flow before running the simulation.*
 
 ## Technology Stack
 
 * **Runtime Environment:** Node.js
-* **Integration Tool:** Node-RED
-* **Database:** MongoDB
-* **Scripting Language:** Python
-* **Communication Protocol:** MQTT
+* **IoT Platform:** Node-RED
+* **Logic & Processing:** JavaScript (ES6)
+* **Data Source:** CSV / Structured Dataset (Virtual Sensors)
 
-***
+---
 
 ## Project Structure
 
 | Folder | Contents | Description |
 | :--- | :--- | :--- |
-| `dashboard_frontend` | `flows.json` | The final Node-RED flow configuration (Logic, Dashboard, MongoDB connection). |
-| `database_config` | `mongo_db_config.txt` | Documentation detailing the MongoDB connection configuration. |
-| `data_aquisition` | `sensor_simulator_data.py`, `requirements.txt` | Python scripts for sensor simulation and dependency listing. |
+| `dashboard_frontend` | `flows.json` | The final Node-RED flow configuration (Logic, Dashboard, Data Parsing). |
+| `data` | `datatest.txt`, `datatest2.txt`, `datatraining.txt` | The dataset files used for simulating sensor readings. |
 
 ## Installation and Execution Guide
 
 ### Prerequisites
 
-* Node.js (for Node-RED)
-* Python 3.x
-* MongoDB (`mongod` and `mongosh` commands accessible)
-* Node-RED and necessary palettes installed (`node-red-dashboard`, `node-red-node-mongodb`, etc.)
+* Node.js (LTS version recommended)
+* Node-RED
+* **Required Palettes:** * `node-red-dashboard`
+    * `node-red-contrib-ui-table` (if used for the history log)
 
-### Step 1: Start MongoDB Database
+### Step 1: Start Node-RED
 
 1.  Open a Command Prompt or Terminal.
-2.  Start the MongoDB server:
-    ```bash
-    mongod
-    ```
-3.  Minimize this window. The server is now running.
-
-### Step 2: Start Node-RED and Load Flow
-
-1.  Open a **new** Command Prompt or Terminal.
 2.  Run Node-RED:
     ```bash
     node-red
     ```
-3.  Node-RED Editor URL: **[http://localhost:1880/](http://localhost:1880/)**
-4.  If needed, import the final flow file: **Menu > Import > Select File** and choose `dashboard_frontend/flows.json`.
-5.  Click **Deploy**.
+3.  The server will start at `http://localhost:1880/`.
 
-### Step 3: Start the Sensor Simulator
+### Step 2: Import the Project Flow
 
-1.  Open a **new** Command Prompt or Terminal.
-2.  **Navigate** to the simulator directory (your local path):
-    ```bash
-    cd C:\Users\Hina\CN_PROJECT_IoTNet_DataAggregator\data_aquisition
-    ```
-3.  Run the simulation script:
-    ```bash
-    python sensor_simulator_data.py
-    ```
+1.  Open your browser and navigate to **[http://localhost:1880/](http://localhost:1880/)**.
+2.  Go to **Menu (≡) > Import > Select File**.
+3.  Choose the `flows.json` file from the `dashboard_frontend` folder in this repository.
+4.  Click **Import**.
+
+### Step 3: Connect the Dataset (Virtual Sensors)
+
+1.  Locate the **"Read File"** or **"Data Injection"** node at the start of the flow.
+2.  Double-click it and set the **File Path** to the location of your downloaded dataset (e.g., `C:\Users\YourName\Downloads\campus_data.csv`).
+3.  Click **Done**.
+4.  Click **Deploy** in the top right corner.
 
 ### Step 4: Access the Dashboard UI
 
@@ -91,13 +90,10 @@ Open your browser to view the live interface:
 
 * **Live Dashboard UI:** **[http://localhost:1880/ui](http://localhost:1880/ui)**
 
-## Database Verification
+---
 
-Use the following commands in a separate `mongosh` session to verify that data is being logged by Node-RED (assuming your database name is `campus`):
+## Troubleshooting
 
-| Action | Command |
-| :--- | :--- |
-| **Start `mongosh`** | `mongosh` |
-| **Select Database** | `use campus` |
-| **View all Collections** | `show collections` |
-| **View Data Samples** | `db.<Your_Collection_Name>.find().limit(5)` |
+* **Dashboard is empty?** * Check that the dataset path in the "Read File" node is correct.
+    * Ensure the CSV headers in the dataset match the keys expected by the flow (e.g., "Temperature", "Humidity").
+* **"Context Collision" Warnings:** * These are safe to ignore; the system uses isolated context stores for room data to prevent data overlap between different virtual sensors.
